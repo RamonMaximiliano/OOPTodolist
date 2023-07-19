@@ -35,6 +35,9 @@ formdata.addEventListener("submit", (e) => {
     //Clearing the input field after adding an item, in vanilla JS it would be like this: "document.querySelector(".addItem").value = '';"
     UI.claerInput();
 
+    //Removing a list item from the UI
+    UI.removeTodo();
+
 });
 
 
@@ -47,7 +50,7 @@ class UI {
             return `
             <div class="taskdescription">
             <p>${item.todo}</p>
-            <span class="erase">🗑️</span>
+            <span class="erase remove">🗑️</span>
             </div>
             `
         });
@@ -62,6 +65,15 @@ class UI {
     static claerInput() {
         inputdata.value = "";
     }
+
+    //Method that removes the item from the UI only, not the array
+    static removeTodo(){
+        listdata.addEventListener("click", (e)=>{
+            if(e.target.classList.contains("remove")){
+                e.target.parentElement.remove();
+            }
+        })
+    };
 }
 
 
