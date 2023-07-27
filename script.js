@@ -3,8 +3,23 @@ let formdata = document.querySelector('[data-form]');
 let listdata = document.querySelector('[data-list]');
 let inputdata = document.querySelector('[data-input]');
 
+//local storage
+class Storage {
+    static setStorage(taksItems){
+        let storage = localStorage.setItem("todo",JSON.stringify(taksItems))
+        return storage
+    };
+
+    static getStorage(){
+        let storage = localStorage.getItem("todo") === null ?
+        [] : JSON.parse(localStorage.getItem("todo"));
+        return storage
+    };
+}
+
+
 //Array of items
-let taksItems = []
+let taksItems = Storage.getStorage();
 
 // OOP Creating the class in JS
 class Todo {
@@ -13,7 +28,6 @@ class Todo {
         this.todo = todo;
     }
 };
-
 
 formdata.addEventListener("submit", (e) => {
     //Preventing the form from submitting and therefore refreshing the page
@@ -38,8 +52,9 @@ formdata.addEventListener("submit", (e) => {
     //Removing a list item from the UI
     UI.removeTodo();
 
+    //add to storage
+    Storage.setStorage(taksItems);
 });
-
 
 //Display the taksItems in the DOM using a class
 
@@ -50,7 +65,7 @@ class UI {
             return `
             <div class="taskdescription">
             <p>${item.todo}</p>
-            <span class="erase remove">🗑️</span>
+            <span class="erase remove" data-id = ${item.id}>🗑️</span>
             </div>
             `
         });
@@ -59,12 +74,12 @@ class UI {
 
         //Checking the type of variable of the variable created above
         console.log(typeof displayData)
-    }
+    };
 
     //Method to Clear the input field after adding an item,
     static claerInput() {
         inputdata.value = "";
-    }
+    };
 
     //Method that removes the item from the UI only, not the array
     static removeTodo(){
@@ -72,11 +87,25 @@ class UI {
             if(e.target.classList.contains("remove")){
                 e.target.parentElement.remove();
             }
+            let btnId = e.target.dataset.id;
+            UI.removeArrayTodo(btnId)
         })
     };
+
+    static removeArrayTodo(id){
+        taksItems = taksItems.filter((item)=> {
+            //The +id below is the same as Number(id), the plus sign converts the variable to a number
+            item.id !== +id;
+        })
+        Storage.setStorage(taksItems);
+    };
+
 }
 
-
+window.addEventListener("DOMContentLoaded", ()=>{
+    UI.displayData();
+    UI.removeTodo();
+})
 
 
 
